@@ -1,5 +1,198 @@
 # Change Log
 
+## Premium Apps: One-Time Purchases and Store
+
+#### April 24, 2024
+
+Two new features are now available for Premium Apps: One-Time Purchases and Stores.
+
+**One-Time Purchases**
+
+- **Durable Items**: A one-time purchase that is permanent and is not subject to either renewal or consumption, such as lifetime access to an app's premium features.
+- **Consumable Items**: A one-time, non-renewable purchase that provides access, such as a temporary power-up or boost in a game.
+
+Learn more about implementing [One-Time Purchases](#DOCS_MONETIZATION_ONE-TIME_PURCHASES).
+
+**A Store for Your Premium App**
+
+We have also introduced a Store for your Premium App to showcase your app subscriptions and one-time purchase items. You can now create a unique Store page within the developer portal and add your published subscription SKUs or one-time purchase SKUs to your store view, allowing your users to buy these items from your App Directory or Bot User Profile.
+
+To explore these features, eligibility details, and how to enable monetization for your app, check out the [Monetization Overview](#DOCS_MONETIZATION_OVERVIEW).
+
+**API Documentation Updates**
+
+The following were added to our public Monetization documentation with this update:
+
+- New [SKU Object Types](#DOCS_MONETIZATION_SKUS/sku-object-sku-types) 
+- New [Entitlement Object Types](#DOCS_MONETIZATION_ENTITLEMENTS/entitlement-object-entitlement-types)
+- [Consume an Entitlement](#DOCS_MONETIZATION_ENTITLEMENTS/consume-an-entitlement) API endpoint
+- `consumed` field on the [Entitlement](#DOCS_MONETIZATION_ENTITLEMENTS) resource
+
+## Modify Guild Member flags field permissions
+
+#### April 23, 2024
+Update permissions necessary to modify the `flags` field when calling the [Modify Guild Member](#DOCS_RESOURCES_GUILD/modify-guild-member) endpoint.
+
+## CSV Export for Premium App Analytics
+
+#### April 2, 2024
+
+For apps with [Monetization](#DOCS_MONETIZATION_OVERVIEW) enabled, we have released the ability to export your SKU analytics to CSV. These exports allow you to use your preferred data tools to report on your premium offerings. 
+
+You can find the export at the bottom of the `Monetization → Analytics` tab of your app to export data points such as `sales_count`, `sales_amount`, `sales_currencies`, `cancellation_count`, `refund_amount`, and `refund_count`, aggregated by each of your offerings for the selected month.
+
+## User-Installable Apps Preview
+
+#### March 18, 2024
+
+> preview
+> User-installable apps are currently in preview. During the preview, there are major [limitations and known bugs](#DOCS_CHANGE_LOG/march-18-2024-limitations-and-known-issues), and API details are subject to change.
+
+Apps can now be installed to users—making them easier to install, discover, and access across Discord. User-installed apps can be used across all of a user's servers, within their (G)DMs, and in DMs with the app's bot user.
+
+When creating or updating your app, you can choose which installation types your app supports on the **Installation** page in your [app's settings](https://discord.com/developers/applications). To quickly get started, you can follow the new [Developing a User-Installable App tutorial](#DOCS_TUTORIALS_DEVELOPING_A_USER_INSTALLABLE_APP) or read details about the new changes below.
+
+This change introduces new concepts and fields across the API that apps will now encounter—
+
+###### API Changes
+
+**Concepts:**
+- [Installation context](#DOCS_RESOURCES_APPLICATION/installation-context) defines how an app was installed: to a user, a guild (server), or both. Currently, apps will default to only support the guild installation context, but the default may change in the future.
+- Commands can also support one or both installation contexts, with the default being the same as the app's supported installation context(s) at the time of command creation.
+- [Interaction context](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/interaction-contexts) defines where a command can be used in Discord—within guilds, DM with your app's bot user, and/or within group DMs and DMs other than with your app's bot user.
+- The installation flow for apps have been updated so users can select whether they want to install an app to their account or to a server. 
+
+**API Fields:**
+- New `integration_types_config` field for [Applications](#DOCS_RESOURCES_APPLICATION/application-object) include the default scopes and permissions for app's supported installation contexts
+- New `integration_types` and `contexts` fields for [Commands](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/application-command-object-application-command-structure) are the supported [installation](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/installation-context) and [interaction](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/interaction-contexts) contexts (respectively) for the command. Read [command contexts](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/contexts) documentation for details.
+- New `context` field for [Interactions](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/interaction-object-interaction-structure) indicates the [interaction context](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/interaction-contexts) where an interaction was triggered from.
+- New `authorizing_integration_owners` field for [Interactions](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/interaction-object-interaction-structure) includes a mapping of installation contexts that the interaction was authorized for, to related snowflakes for that context. Read [Authorizing Integration Owners Object](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/interaction-object-authorizing-integration-owners-object) for details.
+- `app_permissions` is now always serialized for interactions to indicate what [permissions](#DOCS_TOPICS_PERMISSIONS/permissions-bitwise-permission-flags) your app has access to in the context its' responding. For (G)DMs with other users, it will include the `ATTACH_FILES | EMBED_LINKS | MENTION_EVERYONE`, and for DMs with the app's bot user it will also contain `USE_EXTERNAL_EMOJIS` for the bot’s DM
+- New `interaction_metadata` on [Messages](#DOCS_RESOURCES_CHANNEL/message-object) that are created as part of an interaction response (either a response or follow-up). See [Message Interaction Metadata Object](#DOCS_RESOURCES_CHANNEL/message-interaction-metadata-object) for details.
+- `dm_permission` field for [Commands](#DOCS_INTERACTIONS_APPLICATION_COMMANDS/application-command-object-application-command-structure) is deprecated. Apps should use `contexts` instead.
+- `interaction` field for [Messages](#DOCS_RESOURCES_CHANNEL/message-object) is deprecated. Apps should use `interaction_metadata` instead.
+
+###### Limitations and Known Issues
+
+- During the preview, interaction responses for the user installation context will be forced to be ephemeral in servers with over 25  members. Forced ephemerality is enforced at the client-level, so your app does not need to manually pay attention to server size, and will not receive errors via the API.
+- All [follow-up messages](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/followup-messages) are currently forced to be ephemeral in DMs
+- Follow-up messages have a bug where they will not correctly respect user permissions
+
+## Discord Activities: Developer Preview of the Embedded App SDK
+
+#### March 18, 2024
+
+Discord Developers can now build Activities!
+
+Activities are interactive, multiplayer experiences that run in an iframe in Discord. In order to make the communication between your experience and Discord, we've introduced the Embedded App SDK to assist in communicating between your app and the Discord client.
+
+- New [Discord Activities](#DOCS_ACTIVITIES_OVERVIEW) developer docs with a tutorial, code samples, development guides, and design principles.
+- The Embedded App SDK is now available via [npm](https://npmjs.com/package/@discord/embedded-app-sdk) and [GitHub](http://github.com/discord/embedded-app-sdk).
+- The [Embedded App SDK Reference](#DOCS_DEVELOPER_TOOLS_EMBEDDED_APP_SDK) is now available.
+
+To learn more about how to get started building your own Activity, check out the [Activities Overview](#DOCS_ACTIVITIES_OVERVIEW).
+
+## Guild Prune Requiring `MANAGE_GUILD`
+
+#### March 15, 2024
+
+> danger
+> This entry includes breaking changes
+
+The [Get Guild Prune Count](#DOCS_RESOURCES_GUILD/get-guild-prune-count) and [Begin Guild Prune](#DOCS_RESOURCES_GUILD/begin-guild-prune)
+endpoints now require the `MANAGE_GUILD` permission alongside the existing `KICK_MEMBERS` requirement ₍^ >ヮ<^₎ .ᐟ.ᐟ
+
+## Enforced Nonces on Create Message Endpoint
+
+#### February 12, 2024
+
+The [Create message](#DOCS_RESOURCES_CHANNEL/create-message) endpoint now supports an `enforce_nonce` parameter. When set to true, the message will be deduped for the same sender within a few minutes. If a message was created with the same nonce, no new message will be created and the previous message will be returned instead. This behavior will become the default for this endpoint in a future API version.
+
+## Limit Number of Fields in Embeds
+
+#### December 19, 2023
+
+[Embed objects](#DOCS_RESOURCES_CHANNEL/embed-object) are now limited more explicitly to 25 [embed fields](#DOCS_RESOURCES_CHANNEL/embed-object-embed-field-structure). If you pass more than 25 fields within the an embed's `fields` property, an error will be returned.
+
+Previously, only the first 25 embed fields would be displayed within the embed but no error was returned.
+
+## Clarification on Permission Splits for Expressions and Events
+
+#### December 15, 2023
+
+> info
+> The existing behavior for `MANAGE_GUILD_EXPRESSIONS` and `MANAGE_EVENTS` will **not be changing**. These permissions will continue to allow your bot users to create, update and delete expressions/events. No action will be needed if you plan to continue using these permissions.
+
+To support added controls for expressions and events, new [permissions](#DOCS_TOPICS_PERMISSIONS/permissions) were added for users and roles in July 2023:
+
+* `CREATE_GUILD_EXPRESSIONS`: `1 << 43`
+* `CREATE_EVENTS`: `1 << 44`
+
+These allow for creating new expressions and events, as well as editing and deleting those created by the current user.  
+
+> warn
+> These were rolled out in July 2023 to users and roles and have been added to our developer documentation but **are not yet available to app developers**. We will share an update here when these new permissions are available in your apps.
+
+## Experimenting with End-to-End Encryption for Voice & Video
+#### Dec 1, 2023
+
+#### What’s Happening?
+
+As outlined in [a blog post earlier this year](https://discord.com/blog/encryption-for-voice-and-video-on-discord), we are experimenting with end-to-end encryption (e2ee) for voice and video channels. 
+
+End-to-end encryption is designed to only allow the participants in a call to decipher its contents. One of the protocols we’re experimenting with is called Messaging Layer Security, which we believe would allow us to deliver end-to-end encryption at scale. Intermediaries, including platforms like Discord, are unable to access the content of communications encrypted with end-to-end encryption.
+
+#### How do I prepare for the changes?
+
+During this testing phase, there is nothing developers need to do to support end-to-end encryption. Voice channels will automatically downgrade to documented, non-e2ee protocols when a bot user joins the channel. This is transparent to the connecting client but may result in a slight delay between establishing a connection and receiving audio. 
+
+#### What is planned for the future?
+
+We will be continuing our testing and will share updates along with developer documentation and sample code once it is available. 
+
+Once this information is published, we will provide developers with a substantial timeframe to implement end-to-end encryption when interacting with voice and video.
+
+## Premium App Subscriptions: New Ways for Testing App Subscriptions
+#### Nov 29, 2023
+
+Following feedback on Premium App Subscriptions, we've made it easier for developers to test their app subscriptions. The goal is to provide you with flexibility during testing and prevent you from having to use live payment methods.
+
+- Team members will automatically receive a 100% discount on a subscription for your app, allowing you to test the end-to-end payment flow
+- Developers can create and delete [test entitlements](#DOCS_MONETIZATION_ENTITLEMENTS/create-test-entitlement) to toggle access to an application's premium features
+
+Read more about [Testing your App Subscriptions Implementation](#DOCS_MONETIZATION_APP_SUBSCRIPTIONS/testing-your-implementation) for details.
+
+## Fix Message Edit Interaction Response Permissions
+#### Nov 1, 2023
+
+Behavior for message edit interaction response actions like [updating interaction responses](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/edit-original-interaction-response) and [sending follow-up messages](#DOCS_INTERACTIONS_RECEIVING_AND_RESPONDING/followup-messages) have been updated to follow a bot user's permissions.
+
+Previously, some message edit interaction response actions would use the default permissions rather than a bot user's permissions.
+
+## Premium App Subscriptions Now Available in the EU and UK
+#### Oct 19, 2023
+
+Starting today, eligible developers based in EU and UK can now monetize their verified apps with App Subscriptions. [App Subscriptions](#DOCS_MONETIZATION_OVERVIEW) let you to charge your users for premium functionality with a recurring, monthly subscription. 
+
+> info
+> New features for Premium App Subscriptions are documented in the [App Subscriptions overview](#DOCS_MONETIZATION_OVERVIEW) and in [the changelog for the previous App Subscriptions release](#DOCS_CHANGE_LOG/premium-app-subscriptions-available-in-the-us).
+
+To learn more about eligibility details and how to enable monetization for your app, check out the [Monetization Overview](#DOCS_MONETIZATION_OVERVIEW).
+
+## Global Rate Limit added to discordapp.com/*
+#### Oct 17, 2023
+
+We have added a global rate limit for API requests made to `discordapp.com/*` and may further restrict requests in the future. 
+
+To limit impact on your app, please make sure you are making calls to `discord.com/*`.
+
+This does **not** apply for `cdn.discordapp.com`.
+
+Refer to the [API Reference](https://discord.com/developers/docs/reference) for more info on which url(s) to use when building on the REST API
+
+- [February 14, 2022 Change Log](https://discord.com/developers/docs/change-log#feb-14-2022): Requests to v10 and higher will no longer be supported on `discordapp.com` (this does not affect `cdn.discordapp.com`)
+- [May 4, 2020 #api-announcements](https://discord.com/channels/613425648685547541/697138785317814292/706944540971630662)
+
 ## Premium App Subscriptions Available in the US
 #### Sep 26, 2023
 
@@ -931,7 +1124,7 @@ Fixed a bug from the 2.5.5 release that caused network handshakes to fail, resul
 
 We've shipped some updates to the GameSDK, including support for Linux as well as the IL2CPP backend system for Unity. These changes also fixed a bug in the [`SetUserAchievement()`](#DOCS_GAME_SDK_ACHIEVEMENTS/setuserachievement) method.
 
-Get the latest at the top of the [Getting Started](#DOCS_GAME_SDK_SDK_STARTER_GUIDE/step-1-get-the-thing) documentation. If you're looking for help interacting with the GameSDK or want to report a bug, join us on the [official Discord](https://discord.gg/discord-developers).
+Get the latest at the top of the [Getting Started](#DOCS_GAME_SDK_GETTING_STARTED/step-1-get-the-thing) documentation. If you're looking for help interacting with the GameSDK or want to report a bug, join us on the [official Discord](https://discord.gg/discord-developers).
 
 ## Changes to Special Channels
 
@@ -967,7 +1160,7 @@ Additional information has been documented to support [Server Nitro Boosting](ht
 
 #### April 29, 2019
 
-The [Discord-RPC](https://github.com/discord/discord-rpc) implementation of Rich Presence has been deprecated in favor of Discord's new GameSDK. If you're interested in using Rich Presence, please read our [SDK Starter Guide](#DOCS_GAME_SDK_SDK_STARTER_GUIDE/) and check out the relevant functions in the [Activity Manager](#DOCS_GAME_SDK_ACTIVITIES/).
+The [Discord-RPC](https://github.com/discord/discord-rpc) implementation of Rich Presence has been deprecated in favor of Discord's new GameSDK. If you're interested in using Rich Presence, please read our [SDK Starter Guide](#DOCS_GAME_SDK_GETTING_STARTED/) and check out the relevant functions in the [Activity Manager](#DOCS_GAME_SDK_ACTIVITIES/).
 
 ## New Invite Object Fields
 

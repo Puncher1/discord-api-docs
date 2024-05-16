@@ -342,20 +342,21 @@ A partial [guild](#DOCS_RESOURCES_GUILD/guild-object) object. Represents an Offl
 
 ###### Guild Member Structure
 
-| Field                         | Type                                            | Description                                                                                                                                                                                                                          |
-|-------------------------------|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| user?                         | [user](#DOCS_RESOURCES_USER/user-object) object | the user this guild member represents                                                                                                                                                                                                |
-| nick?                         | ?string                                         | this user's guild nickname                                                                                                                                                                                                           |
-| avatar?                       | ?string                                         | the member's [guild avatar hash](#DOCS_REFERENCE/image-formatting)                                                                                                                                                                   |
-| roles                         | array of snowflakes                             | array of [role](#DOCS_TOPICS_PERMISSIONS/role-object) object ids                                                                                                                                                                     |
-| joined_at                     | ISO8601 timestamp                               | when the user joined the guild                                                                                                                                                                                                       |
-| premium_since?                | ?ISO8601 timestamp                              | when the user started [boosting](https://support.discord.com/hc/en-us/articles/360028038352-Server-Boosting-) the guild                                                                                                              |
-| deaf                          | boolean                                         | whether the user is deafened in voice channels                                                                                                                                                                                       |
-| mute                          | boolean                                         | whether the user is muted in voice channels                                                                                                                                                                                          |
-| flags                         | integer                                         | [guild member flags](#DOCS_RESOURCES_GUILD/guild-member-object-guild-member-flags) represented as a bit set, defaults to `0`                                                                                                         |
-| pending?                      | boolean                                         | whether the user has not yet passed the guild's [Membership Screening](#DOCS_RESOURCES_GUILD/membership-screening-object) requirements                                                                                               |
-| permissions?                  | string                                          | total permissions of the member in the channel, including overwrites, returned when in the interaction object                                                                                                                        |
-| communication_disabled_until? | ?ISO8601 timestamp                              | when the user's [timeout](https://support.discord.com/hc/en-us/articles/4413305239191-Time-Out-FAQ) will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out |
+| Field                         | Type                                                                                 | Description                                                                                                                                                                                                                          |
+|-------------------------------|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| user?                         | [user](#DOCS_RESOURCES_USER/user-object) object                                      | the user this guild member represents                                                                                                                                                                                                |
+| nick?                         | ?string                                                                              | this user's guild nickname                                                                                                                                                                                                           |
+| avatar?                       | ?string                                                                              | the member's [guild avatar hash](#DOCS_REFERENCE/image-formatting)                                                                                                                                                                   |
+| roles                         | array of snowflakes                                                                  | array of [role](#DOCS_TOPICS_PERMISSIONS/role-object) object ids                                                                                                                                                                     |
+| joined_at                     | ISO8601 timestamp                                                                    | when the user joined the guild                                                                                                                                                                                                       |
+| premium_since?                | ?ISO8601 timestamp                                                                   | when the user started [boosting](https://support.discord.com/hc/en-us/articles/360028038352-Server-Boosting-) the guild                                                                                                              |
+| deaf                          | boolean                                                                              | whether the user is deafened in voice channels                                                                                                                                                                                       |
+| mute                          | boolean                                                                              | whether the user is muted in voice channels                                                                                                                                                                                          |
+| flags                         | integer                                                                              | [guild member flags](#DOCS_RESOURCES_GUILD/guild-member-object-guild-member-flags) represented as a bit set, defaults to `0`                                                                                                         |
+| pending?                      | boolean                                                                              | whether the user has not yet passed the guild's [Membership Screening](#DOCS_RESOURCES_GUILD/membership-screening-object) requirements                                                                                               |
+| permissions?                  | string                                                                               | total permissions of the member in the channel, including overwrites, returned when in the interaction object                                                                                                                        |
+| communication_disabled_until? | ?ISO8601 timestamp                                                                   | when the user's [timeout](https://support.discord.com/hc/en-us/articles/4413305239191-Time-Out-FAQ) will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out |
+| avatar_decoration_data?       | ?[avatar decoration data](#DOCS_RESOURCES_USER/avatar-decoration-data-object) object | data for the member's guild avatar decoration                                                                                                                                                                                        |
 
 > info
 > The field `user` won't be included in the member object attached to `MESSAGE_CREATE` and `MESSAGE_UPDATE` gateway events.
@@ -554,14 +555,20 @@ Represents the [onboarding](https://support.discord.com/hc/en-us/articles/110749
 
 ###### Prompt Option Structure
 
-| Field       | Type                                               | Description                                                       |
-|-------------|----------------------------------------------------|-------------------------------------------------------------------|
-| id          | snowflake                                          | ID of the prompt option                                           |
-| channel_ids | array of snowflakes                                | IDs for channels a member is added to when the option is selected |
-| role_ids    | array of snowflakes                                | IDs for roles assigned to a member when the option is selected    |
-| emoji       | [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object | Emoji of the option                                               |
-| title       | string                                             | Title of the option                                               |
-| description | ?string                                            | Description of the option                                         |
+| Field           | Type                                               | Description                                                       |
+|-----------------|----------------------------------------------------|-------------------------------------------------------------------|
+| id              | snowflake                                          | ID of the prompt option                                           |
+| channel_ids     | array of snowflakes                                | IDs for channels a member is added to when the option is selected |
+| role_ids        | array of snowflakes                                | IDs for roles assigned to a member when the option is selected    |
+| emoji?          | [emoji](#DOCS_RESOURCES_EMOJI/emoji-object) object | Emoji of the option (see below)                                   |
+| emoji_id?       | snowflake                                          | Emoji ID of the option (see below)                                |
+| emoji_name?     | string                                             | Emoji name of the option (see below)                              |
+| emoji_animated? | boolean                                            | Whether the emoji is animated (see below)                         |
+| title           | string                                             | Title of the option                                               |
+| description     | ?string                                            | Description of the option                                         |
+
+> warn
+> When creating or updating a prompt option, the `emoji_id`, `emoji_name`, and `emoji_animated` fields must be used instead of the emoji object.
 
 ###### Onboarding Mode
 
@@ -714,9 +721,9 @@ Returns the [guild](#DOCS_RESOURCES_GUILD/guild-object) object for the given id.
 
 ###### Query String Params
 
-| Field        | Type    | Description                                                                   | Required | Default |
-|--------------|---------|-------------------------------------------------------------------------------|----------|---------|
-| with_counts? | boolean | when `true`, will return approximate member and presence counts for the guild | false    | false   |
+| Field        | Type                                             | Description                                                                   | Required | Default |
+|--------------|--------------------------------------------------|-------------------------------------------------------------------------------|----------|---------|
+| with_counts? | [boolean](#DOCS_REFERENCE/boolean-query-strings) | when `true`, will return approximate member and presence counts for the guild | false    | false   |
 
 ###### Example Response
 
@@ -977,15 +984,15 @@ Modify attributes of a [guild member](#DOCS_RESOURCES_GUILD/guild-member-object)
 
 ###### JSON Params
 
-| Field                        | Type                | Description                                                                                                                                                                                                                                                                                                                                | Permission       |
-|------------------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
-| nick                         | string              | value to set user's nickname to                                                                                                                                                                                                                                                                                                            | MANAGE_NICKNAMES |
-| roles                        | array of snowflakes | array of role ids the member is assigned                                                                                                                                                                                                                                                                                                   | MANAGE_ROLES     |
-| mute                         | boolean             | whether the user is muted in voice channels. Will throw a 400 error if the user is not in a voice channel                                                                                                                                                                                                                                  | MUTE_MEMBERS     |
-| deaf                         | boolean             | whether the user is deafened in voice channels. Will throw a 400 error if the user is not in a voice channel                                                                                                                                                                                                                               | DEAFEN_MEMBERS   |
-| channel_id                   | snowflake           | id of channel to move user to (if they are connected to voice)                                                                                                                                                                                                                                                                             | MOVE_MEMBERS     |
-| communication_disabled_until | ISO8601 timestamp   | when the user's [timeout](https://support.discord.com/hc/en-us/articles/4413305239191-Time-Out-FAQ) will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the ADMINISTRATOR permission or is the owner of the guild | MODERATE_MEMBERS |
-| flags                        | integer             | [guild member flags](#DOCS_RESOURCES_GUILD/guild-member-object-guild-member-flags)                                                                                                                                                                                                                                                         | MODERATE_MEMBERS
+| Field                        | Type                | Description                                                                                                                                                                                                                                                                                                                                | Permission                                                                          |
+|------------------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| nick                         | string              | value to set user's nickname to                                                                                                                                                                                                                                                                                                            | MANAGE_NICKNAMES                                                                    |
+| roles                        | array of snowflakes | array of role ids the member is assigned                                                                                                                                                                                                                                                                                                   | MANAGE_ROLES                                                                        |
+| mute                         | boolean             | whether the user is muted in voice channels. Will throw a 400 error if the user is not in a voice channel                                                                                                                                                                                                                                  | MUTE_MEMBERS                                                                        |
+| deaf                         | boolean             | whether the user is deafened in voice channels. Will throw a 400 error if the user is not in a voice channel                                                                                                                                                                                                                               | DEAFEN_MEMBERS                                                                      |
+| channel_id                   | snowflake           | id of channel to move user to (if they are connected to voice)                                                                                                                                                                                                                                                                             | MOVE_MEMBERS                                                                        |
+| communication_disabled_until | ISO8601 timestamp   | when the user's [timeout](https://support.discord.com/hc/en-us/articles/4413305239191-Time-Out-FAQ) will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the ADMINISTRATOR permission or is the owner of the guild | MODERATE_MEMBERS                                                                    |
+| flags                        | integer             | [guild member flags](#DOCS_RESOURCES_GUILD/guild-member-object-guild-member-flags)                                                                                                                                                                                                                                                         | MANAGE_GUILD or MANAGE_ROLES or (MODERATE_MEMBERS and KICK_MEMBERS and BAN_MEMBERS) |
 
 ## Modify Current Member % PATCH /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/members/@me
 
@@ -1076,6 +1083,32 @@ Remove the ban for a user. Requires the `BAN_MEMBERS` permissions. Returns a 204
 > info
 > This endpoint supports the `X-Audit-Log-Reason` header.
 
+## Bulk Guild Ban % POST /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/bulk-ban
+
+Ban up to 200 users from a guild, and optionally delete previous messages sent by the banned users. Requires both the `BAN_MEMBERS` and `MANAGE_GUILD` permissions. Returns a 200 response on success, including the fields `banned_users` with the IDs of the banned users and `failed_users` with IDs that could not be banned or were already banned.
+
+> info
+> This endpoint supports the `X-Audit-Log-Reason` header.
+
+###### JSON Params
+
+| Field                   | Type                | Description                                                             | Default |
+|-------------------------|---------------------|-------------------------------------------------------------------------|---------|
+| user_ids                | array of snowflakes | list of user ids to ban (max 200)                                       |         |
+| delete_message_seconds? | integer             | number of seconds to delete messages for, between 0 and 604800 (7 days) | 0       |
+
+###### Bulk Ban Response
+
+On success, this endpoint returns a 200 success response with the following body.
+
+| Field        | Type                | Description                                     |
+|--------------|---------------------|-------------------------------------------------|
+| banned_users | array of snowflakes | list of user ids, that were successfully banned |
+| failed_users | array of snowflakes | list of user ids, that were not banned          |
+
+> info
+> If none of the users could be banned, an error response code `500000: Failed to ban users` is returned instead.
+
 ## Get Guild Roles % GET /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/roles
 
 Returns a list of [role](#DOCS_TOPICS_PERMISSIONS/role-object) objects for the guild.
@@ -1159,7 +1192,7 @@ Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a 204 empty
 
 ## Get Guild Prune Count % GET /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/prune
 
-Returns an object with one `pruned` key indicating the number of members that would be removed in a prune operation. Requires the `KICK_MEMBERS` permission.
+Returns an object with one `pruned` key indicating the number of members that would be removed in a prune operation. Requires the `MANAGE_GUILD` and `KICK_MEMBERS` permissions.
 
 By default, prune will not remove users with roles. You can optionally include specific roles in your prune by providing the `include_roles` parameter. Any inactive user that has a subset of the provided role(s) will be counted in the prune and users with additional roles will not.
 
@@ -1172,7 +1205,7 @@ By default, prune will not remove users with roles. You can optionally include s
 
 ## Begin Guild Prune % POST /guilds/{guild.id#DOCS_RESOURCES_GUILD/guild-object}/prune
 
-Begin a prune operation. Requires the `KICK_MEMBERS` permission. Returns an object with one `pruned` key indicating the number of members that were removed in the prune operation. For large guilds it's recommended to set the `compute_prune_count` option to `false`, forcing `pruned` to `null`. Fires multiple [Guild Member Remove](#DOCS_TOPICS_GATEWAY_EVENTS/guild-member-remove) Gateway events.
+Begin a prune operation. Requires the `MANAGE_GUILD` and `KICK_MEMBERS` permissions. Returns an object with one `pruned` key indicating the number of members that were removed in the prune operation. For large guilds it's recommended to set the `compute_prune_count` option to `false`, forcing `pruned` to `null`. Fires multiple [Guild Member Remove](#DOCS_TOPICS_GATEWAY_EVENTS/guild-member-remove) Gateway events.
 
 By default, prune will not remove users with roles. You can optionally include specific roles in your prune by providing the `include_roles` parameter. Any inactive user that has a subset of the provided role(s) will be included in the prune and users with additional roles will not.
 
